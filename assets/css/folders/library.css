@@ -1,0 +1,28 @@
+body.upload-php h2.media-frame-menu-heading {
+	display: none
+}
+
+body.upload-php .media-frame.mode-grid .media-frame-menu {
+	display: block;
+}
+
+body.upload-php .media-frame-tab-panel {
+	margin-left: 290px;
+}
+
+body.upload-php .wrap h1.wp-heading-inline {
+	margin-left: 290px;
+}
+
+body.upload-php .wpmp-folders-app h3 {
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+
+body.upload-php .media-menu {
+	border-right: 0;
+}
+
+body.upload-php .wpmp-folders-app .folders-list {
+	max-height: none;
+}

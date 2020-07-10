@@ -197,7 +197,7 @@ class Folders extends Module {
 	 * Delete folder via ajax
 	 */
 	public function ajax_delete_folder() {
-		if ( empty( $_POST['id'] ) || empty( $_POST['name'] ) ) {
+		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error();
 		}
 
@@ -206,12 +206,6 @@ class Folders extends Module {
 		}
 
 		$id   = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		$name = filter_input( INPUT_POST, 'term', FILTER_SANITIZE_STRING );
-
-		$args = [
-			'slug' => $this->get_unique_slug( $name ),
-		];
-
 		$term = get_term( $id, self::TAXONOMY_SLUG );
 
 		if ( empty( $term ) ) {

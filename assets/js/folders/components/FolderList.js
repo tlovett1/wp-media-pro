@@ -37,7 +37,7 @@ const FolderList = () => {
 				});
 			});
 		}
-	}, [state.folders, state.loadingFolders]);
+	}, [state.folders, state.loadingFolders]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<div className={'folders-list ' + (state.loadingFolders ? 'loading' : '')}>
