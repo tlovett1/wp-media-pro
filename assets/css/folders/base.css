@@ -1,0 +1,38 @@
+.media-frame-menu {
+	width: 280px;
+}
+
+.media-frame-title,
+.media-frame-content,
+.media-frame-router {
+	left: 280px;
+}
+
+.wpmp-folders-app {
+	padding: 8px 20px;
+}
+
+.wpmp-folders-app h3 {
+	font-size: 13px;
+	margin-bottom: 16px;
+}
+
+
+.wpmp-folders-app .nav {
+	border-bottom: 1px solid #aaaaaa;
+	padding-bottom: 7px;
+}
+
+body.wpmp-body-dragging .uploader-window {
+	display: none !important;
+}
+
+.wpmp-folders-app .folders-list .cancel-button {
+	background: transparent;
+	border: 0;
+	text-decoration: underline;
+	padding: 0;
+	margin-left: 6px;
+	position: relative;
+	top: 3px;
+}

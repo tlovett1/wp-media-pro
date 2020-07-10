@@ -1,0 +1,8 @@
+.compat-attachment-fields {
+	width: 100%;
+	max-width: 550px;
+}
+
+.compat-attachment-fields input[type="text"] {
+	width: 100%;
+}

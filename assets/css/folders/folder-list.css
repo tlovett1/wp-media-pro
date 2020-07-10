@@ -1,0 +1,129 @@
+
+.wpmp-folders-app .folders-list {
+	margin: 11px 0;
+	overflow: scroll;
+	max-height: 350px;
+}
+
+.wpmp-folders-app .folders-list.loading:before {
+	content: ' ';
+	background: url(../../assets/img/spinner.gif) no-repeat top left;
+	display: block;
+	width: 18px;
+    height: 18px;
+    background-size: cover;
+}
+
+.wpmp-folders-app .folders-list ul {
+	margin: 0;
+}
+
+.wpmp-folders-app .folders-list li {
+	margin-bottom: 7px;
+	position: relative;
+	padding: 3px 1px 0px 2px;
+}
+
+.wpmp-folders-app .folders-list li.folder.current-folder {
+	background-color: #ddd;
+}
+
+.wpmp-folders-app .folders-list li.folder.show-deleting,
+.wpmp-folders-app .folders-list li.folder.show-renaming {
+	background-color: #efefef;
+    padding: 5px;
+    border: 1px solid #999;
+}
+
+.wpmp-folders-app .folders-list li.deleting,
+.wpmp-folders-app .folders-list li.renaming {
+	cursor: default;
+}
+
+.wpmp-folders-app .folders-list li.moving:before {
+	content: ' ';
+	background: url(../../assets/img/spinner.gif) no-repeat top left;
+	display: inline-block;
+	width: 16px;
+    height: 16px;
+    background-size: cover;
+	top: 3px;
+	position: relative;
+	margin-right: 4px;
+}
+
+.wpmp-folders-app .folders-list li.folder.moving .toggle-folder {
+	width: calc(100% - 43px);
+	cursor: pointer;
+}
+
+.wpmp-folders-app .folders-list li.dragging {
+	font-weight: bold;
+}
+
+.wpmp-folders-app .folders-list li.deleting:before,
+.wpmp-folders-app .folders-list li.renaming:before {
+	content: ' ';
+	background-color: #333;
+	opacity: .5;
+	z-index: 2;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+
+.wpmp-folders-app .folders-list .toggle-folder:hover {
+	color: #0073aa;
+}
+
+.wpmp-folders-app .folders-list li.parent-folder {
+	color: #666;
+	margin-bottom: 10px;
+}
+
+.wpmp-folders-app .folders-list li.folder .toggle-folder {
+	background-color: transparent;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+	width: auto;
+	padding-right: 4px;
+    text-align: left;
+}
+
+.wpmp-folders-app .folders-list li.folder .toggle-folder:before {
+	content: ' ';
+    background: url(../../assets/svg/folder-solid.svg) no-repeat top left;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 7px;
+    bottom: 1px;
+	position: relative;
+}
+
+.wpmp-folders-app .folders-list li.folder.level-1 {
+	padding-left: 10px
+}
+
+.wpmp-folders-app .folders-list li.folder.level-2 {
+	padding-left: 20px
+}
+
+.wpmp-folders-app .folders-list li.folder.level-3 {
+	padding-left: 30px
+}
+
+.wpmp-folders-app .folders-list li.folder.dragging .toggle-folder:before,
+.wpmp-folders-app .folders-list li.folder.moving .toggle-folder:before,
+.wpmp-folders-app .folders-list li.folder.current-folder .toggle-folder:before,
+.wpmp-folders-app li.folder.current-folder .confirm-rename:before  {
+    background: url(../../assets/svg/folder-open-solid.svg) no-repeat top left;
+}
+
+.wpmp-folders-app .folders-list li .count {
+	margin-right: 3px;
+}

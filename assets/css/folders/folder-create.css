@@ -1,0 +1,37 @@
+
+
+.wpmp-folders-app .add-folder-wrapper button.open-input {
+	border: 0;
+	background-color: transparent;
+	padding: 0;
+	cursor: pointer;
+	color: #444;
+}
+
+.wpmp-folders-app .add-folder-wrapper button.open-input:hover {
+	color: #0073aa;
+}
+
+.wpmp-folders-app .add-folder-wrapper.disabled button,
+.wpmp-folders-app .add-folder-wrapper.disabled input {
+	background-color: #bbb;
+	pointer-events: none;
+}
+
+
+.wpmp-folders-app .add-folder-wrapper button.open-input:before {
+	content: ' ';
+    background: url(../../assets/svg/folder-plus-solid.svg) no-repeat top left;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 7px;
+    bottom: 2px;
+    position: relative;
+}
+
+.wpmp-folders-app .add-folder-wrapper input {
+	width: calc(100% - 53px);
+    margin-right: 3px;
+}

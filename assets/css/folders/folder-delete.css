@@ -1,0 +1,54 @@
+
+.wpmp-folders-app .folders-list li:hover .delete-folder {
+	display: block;
+}
+
+.wpmp-folders-app .folders-list li.moving:hover .delete-folder {
+	display: none;
+}
+
+.wpmp-folders-app .folders-list .delete-folder.show-deleting {
+	display: block;
+}
+
+.wpmp-folders-app .delete-confirm-folder {
+	padding: 6px 0;
+}
+
+.wpmp-folders-app .delete-folder {
+	background-color: transparent;
+	border: 0;
+	cursor: pointer;
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 1px;
+	padding: 0;
+}
+
+.wpmp-folders-app .delete-folder.show-deleting {
+	top: 3px;
+	right: 3px;
+}
+
+.wpmp-folders-app .delete-folder:before {
+	content: '✕';
+	display: block;
+	color: #fff;
+	background-color: #666;
+	border-radius: 50%;
+	width: 17px;
+	height: 17px;
+	line-height: 17px;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 10px;
+}
+
+.wpmp-folders-app .delete-folder:hover:before {
+	background-color: #333;
+}
+
+.wpmp-folders-app .confirm-delete {
+	margin-top: 5px;
+}

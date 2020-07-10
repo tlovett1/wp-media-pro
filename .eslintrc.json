@@ -1,0 +1,17 @@
+{
+  "extends": "@10up/eslint-config/wordpress",
+  "rules": {
+    "prefer-template": 0,
+    "no-underscore-dangle": 0,
+    "no-param-reassign": 0,
+    "import/prefer-default-export": 0,
+    "react/forbid-prop-types": 0
+  },
+  "globals": {
+	  "module": true,
+    "process": true,
+    "jquery": true,
+    "wp": true,
+    "ajaxurl": true
+  }
+}

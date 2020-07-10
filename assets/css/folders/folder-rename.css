@@ -1,0 +1,51 @@
+.wpmp-folders-app .rename-folder {
+	background-color: transparent;
+	border: 0;
+	cursor: pointer;
+	position: absolute;
+	right: 22px;
+	top: 1px;
+	padding: 0;
+	display: none;
+}
+
+
+.wpmp-folders-app .folders-list li:hover .rename-folder {
+	display: block;
+}
+
+.wpmp-folders-app .folder .rename-folder:before {
+	background: url("../../assets/svg/edit.svg") no-repeat center center;
+	display: block;
+	width: 17px;
+	height: 17px;
+	content: ' ';
+	width: 18px;
+	height: 16px;
+}
+
+.wpmp-folders-app .folder.show-renaming .toggle-folder {
+	display: none;
+}
+
+.wpmp-folders-app .confirm-rename {
+	padding: 6px 0;
+}
+
+.wpmp-folders-app .confirm-rename input {
+	width: calc(100% - 30px);
+	margin-bottom: 6px;
+}
+
+
+.wpmp-folders-app .confirm-rename:before {
+	content: ' ';
+    background: url(../../assets/svg/folder-solid.svg) no-repeat top left;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 7px;
+    bottom: 2px;
+	position: relative;
+}
