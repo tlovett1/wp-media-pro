@@ -56,6 +56,7 @@ function sanitize_options( $option ) {
 	$new_option['enable_credits']    = ! empty( $option['enable_credits'] );
 	$new_option['enable_folders']    = ! empty( $option['enable_folders'] );
 	$new_option['enable_media_tags'] = ! empty( $option['enable_media_tags'] );
+	$new_option['show_single_view']  = ! empty( $option['show_single_view'] );
 
 	return $new_option;
 }
@@ -67,7 +68,7 @@ function screen_options() {
 	$settings = Utils\get_settings();
 	?>
 	<div class="wrap">
-		<h1><?php esc_html_e( 'WP Media Pro Settings', 'simple-cache' ); ?></h1>
+		<h1><?php esc_html_e( 'WP Media Pro', 'simple-cache' ); ?></h1>
 
 		<form action="options.php" method="post">
 			<?php settings_fields( 'wpmp_settings' ); ?>
@@ -97,6 +98,17 @@ function screen_options() {
 						</th>
 						<td>
 							<label><input id="wpmp_enable_credits" <?php checked( true, $settings['enable_credits'] ); ?> type="checkbox" value="1" name="wpmp_settings[enable_credits]"> <?php esc_html_e( 'Enable', 'wpmp' ); ?></label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="wpmp_show_single_view"><?php esc_html_e( 'Show Single Media File View', 'wpmp' ); ?></label>
+						</th>
+						<td>
+							<label><input id="wpmp_show_single_view" <?php checked( true, $settings['show_single_view'] ); ?> type="checkbox" value="1" name="wpmp_settings[show_single_view]"> <?php esc_html_e( 'Yes', 'wpmp' ); ?></label>
+							<p class="description">
+								<?php esc_html_e( 'By default, WordPress creates pages on the front end for each media file. This is usually not needed and bad for SEO. This disables that.', 'wpmp' ); ?>
+							</p>
 						</td>
 					</tr>
 				</tbody>

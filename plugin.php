@@ -67,6 +67,7 @@ spl_autoload_register(
 Modules\Taxonomies\Taxonomies::instance();
 Modules\Folders\Folders::instance();
 Modules\Credits\Credits::instance();
+Modules\SingleView\SingleView::instance();
 
 Core\setup();
 Dashboard\setup();

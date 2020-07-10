@@ -6,7 +6,7 @@ import { AppContext } from '../contexts/AppContext';
 const { __ } = wp.i18n;
 
 const App = () => {
-	const [state, dispatch] = useContext(AppContext);
+	const [state] = useContext(AppContext);
 
 	return (
 		<div className="wpmp-folders-app">

@@ -18,6 +18,7 @@ function get_setting_defaults() {
 		'enable_media_tags' => true,
 		'enable_folders'    => true,
 		'enable_credits'    => true,
+		'show_single_view'  => false,
 	];
 }
 
