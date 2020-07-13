@@ -31,6 +31,7 @@ class Folders extends Module {
 		add_action( 'wp_ajax_wpmp_create_folder', [ $this, 'ajax_create_folder' ] );
 		add_action( 'wp_ajax_wpmp_delete_folder', [ $this, 'ajax_delete_folder' ] );
 		add_action( 'wp_ajax_wpmp_get_folders', [ $this, 'ajax_get_folders' ] );
+		add_action( 'wp_ajax_wpmp_get_folder_path', [ $this, 'ajax_get_folder_path' ] );
 		add_action( 'wp_ajax_wpmp_move_image', [ $this, 'ajax_move_image' ] );
 		add_action( 'wp_ajax_wpmp_rename_folder', [ $this, 'ajax_rename_folder' ] );
 		add_filter( 'ajax_query_attachments_args', [ $this, 'filter_attachment_query' ] );
@@ -75,7 +76,7 @@ class Folders extends Module {
 	 * @param int $post_id Post ID
 	 * @return string
 	 */
-	public function get_pretty_foler_path( $post_id ) {
+	public function get_pretty_folder_path( $post_id ) {
 		$terms = $this->get_folder_path( $post_id );
 
 		if ( empty( $terms ) ) {
@@ -102,7 +103,7 @@ class Folders extends Module {
 	 * @return void
 	 */
 	public function folder_meta_box( $post ) {
-		$folder_path = $this->get_pretty_foler_path( $post->ID );
+		$folder_path = $this->get_pretty_folder_path( $post->ID );
 		if ( empty( $folder_path ) ) {
 			$folder_path = esc_html__( 'None', 'wpmp' );
 		}
@@ -241,6 +242,23 @@ class Folders extends Module {
 		wp_set_object_terms( (int) $image_id, [ (int) $folder_id ], self::TAXONOMY_SLUG, false );
 
 		wp_send_json_success( $this->get_folders() );
+	}
+
+	/**
+	 * Get folder path
+	 */
+	public function ajax_get_folder_path() {
+		if ( empty( $_POST['postId'] ) ) {
+			wp_send_json_error();
+		}
+
+		if ( ! wp_verify_nonce( $_POST['nonce'], 'wpmp_folders' ) ) {
+			wp_send_json_error();
+		}
+
+		$post_id = filter_input( INPUT_POST, 'postId', FILTER_SANITIZE_NUMBER_INT );
+
+		wp_send_json_success( $this->get_pretty_folder_path( $post_id ) );
 	}
 
 	/**

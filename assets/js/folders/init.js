@@ -3,6 +3,8 @@ import jQuery from 'jquery'; // eslint-disable-line import/no-unresolved
 import ReactDom from 'react-dom';
 import Root from './Root';
 
+const { __ } = wp.i18n;
+
 window.wpmpAttachmentBrowserCollection = null;
 
 let dragImg;
@@ -191,5 +193,43 @@ wp.media.view.UploaderInline = wp.media.view.UploaderInline.extend({
 				}
 			}
 		}, 50);
+	},
+});
+
+const currentAttachmentCompat = wp.media.view.AttachmentCompat;
+wp.media.view.AttachmentCompat = wp.media.view.AttachmentCompat.extend({
+	render() {
+		currentAttachmentCompat.prototype.render.apply(this);
+
+		const folderEl = document.createElement('span');
+		folderEl.classList.add('setting');
+
+		const folderLabel = document.createElement('span');
+		folderLabel.classList.add('name');
+		folderLabel.innerText = __('Folder', 'wpmp');
+
+		const folderValue = document.createElement('span');
+		folderValue.classList.add('value');
+		folderValue.innerText = '';
+
+		const { el } = this;
+
+		jQuery
+			.ajax({
+				url: ajaxurl,
+				method: 'post',
+				data: {
+					nonce: wpmpFolders.nonce,
+					postId: this.model.attributes.id,
+					action: 'wpmp_get_folder_path',
+				},
+			})
+			.done((response) => {
+				folderValue.innerHTML = response.data;
+				folderEl.appendChild(folderLabel);
+				folderEl.appendChild(folderValue);
+
+				el.prepend(folderEl);
+			});
 	},
 });
