@@ -10,13 +10,14 @@ body.upload-php .media-frame-tab-panel {
 	margin-left: 290px;
 }
 
-body.upload-php #media-grid h1.wp-heading-inline {
+body.upload-php #wp-media-grid h1.wp-heading-inline {
 	margin-left: 290px;
 }
 
 body.upload-php .wpmp-folders-app h3 {
 	font-size: 20px;
 	margin-bottom: 20px;
+	margin-top: 14px;
 }
 
 body.upload-php .media-menu {
@@ -26,3 +27,4 @@ body.upload-php .media-menu {
 body.upload-php .wpmp-folders-app .folders-list {
 	max-height: none;
 }
+

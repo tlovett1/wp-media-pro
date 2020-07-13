@@ -34,8 +34,84 @@ class Folders extends Module {
 		add_action( 'wp_ajax_wpmp_move_image', [ $this, 'ajax_move_image' ] );
 		add_action( 'wp_ajax_wpmp_rename_folder', [ $this, 'ajax_rename_folder' ] );
 		add_filter( 'ajax_query_attachments_args', [ $this, 'filter_attachment_query' ] );
+		add_action( 'attachment_submitbox_misc_actions', [ $this, 'folder_meta_box' ], 11 );
 	}
 
+	/**
+	 * Get folder path for a post
+	 *
+	 * @param int $post_id Post ID
+	 * @return array
+	 */
+	public function get_folder_path( $post_id ) {
+		$term = wp_get_object_terms( $post_id, self::TAXONOMY_SLUG );
+
+		if ( empty( $term ) ) {
+			return null;
+		}
+
+		$terms = [];
+
+		$term = $term[0];
+
+		$terms[] = $term;
+
+		while ( ! empty( $term->parent ) ) {
+			$term = get_term( $term->parent, self::TAXONOMY_SLUG );
+
+			if ( empty( $term ) ) {
+				break;
+			}
+
+			$terms[] = $term;
+		}
+
+		return $terms;
+	}
+
+	/**
+	 * Get pretty folder path
+	 *
+	 * @param int $post_id Post ID
+	 * @return string
+	 */
+	public function get_pretty_foler_path( $post_id ) {
+		$terms = $this->get_folder_path( $post_id );
+
+		if ( empty( $terms ) ) {
+			return null;
+		}
+
+		$path = '';
+
+		foreach ( $terms as $term ) {
+			if ( ! empty( $path ) ) {
+				$path .= ' &gt; ';
+			}
+
+			$path .= $term->name;
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Output folder meta box
+	 *
+	 * @param WP_Post $post Post object
+	 * @return void
+	 */
+	public function folder_meta_box( $post ) {
+		$folder_path = $this->get_pretty_foler_path( $post->ID );
+		if ( empty( $folder_path ) ) {
+			$folder_path = esc_html__( 'None', 'wpmp' );
+		}
+		?>
+		<div class="misc-pub-section misc-pub-dimensions">
+			<?php esc_html_e( 'Folder:', 'wpmp' ); ?> <strong><?php echo esc_html( $folder_path ); ?></strong>
+		</div>
+		<?php
+	}
 	/**
 	 * Filter attachment query to insert folder tax query
 	 *
