@@ -90,7 +90,9 @@
 	cursor: pointer;
 	width: auto;
 	padding-right: 4px;
-    text-align: left;
+	text-align: left;
+	text-decoration: none;
+	color: inherit;
 }
 
 .wpmp-folders-app .folders-list li.folder .toggle-folder:before {

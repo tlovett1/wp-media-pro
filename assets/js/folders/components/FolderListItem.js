@@ -1,5 +1,7 @@
 import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { wpmpFolders } from 'window'; // eslint-disable-line import/no-unresolved
 import { AppContext } from '../contexts/AppContext';
 import DeleteFolder from './DeleteFolder';
 import RenameFolder from './RenameFolder';
@@ -52,6 +54,9 @@ const FolderListItem = ({ folder }) => {
 		setDragging(false);
 	};
 
+	const destination =
+		state.currentFolder && state.currentFolder.id === folder.id ? '/' : '/#' + folder.slug;
+
 	return (
 		<li
 			onDrop={dropHandler}
@@ -80,21 +85,33 @@ const FolderListItem = ({ folder }) => {
 					: '')
 			}
 		>
-			<button
-				className="toggle-folder"
-				type="button"
-				onClick={() => {
-					if (state.currentFolder && state.currentFolder.id === folder.id) {
-						handleFolderChange(null);
-					} else {
-						handleFolderChange(folder);
-					}
-				}}
-				aria-label={__('Open or Close Folder ' + folder.name)}
-			>
-				{folder.count >= 1 ? <span className="count">[{folder.count}]</span> : ''}
-				{folder.name}
-			</button>
+			{wpmpFolders.libraryPage ? (
+				<Link
+					className="toggle-folder"
+					type="button"
+					to={destination}
+					aria-label={__('Open or Close Folder ' + folder.name)}
+				>
+					{folder.count >= 1 ? <span className="count">[{folder.count}]</span> : ''}
+					{folder.name}
+				</Link>
+			) : (
+				<button
+					className="toggle-folder"
+					type="button"
+					onClick={() => {
+						if (state.currentFolder && state.currentFolder.id === folder.id) {
+							handleFolderChange(null);
+						} else {
+							handleFolderChange(folder);
+						}
+					}}
+					aria-label={__('Open or Close Folder ' + folder.name)}
+				>
+					{folder.count >= 1 ? <span className="count">[{folder.count}]</span> : ''}
+					{folder.name}
+				</button>
+			)}
 
 			<RenameFolder folder={folder} />
 			<DeleteFolder folder={folder} />

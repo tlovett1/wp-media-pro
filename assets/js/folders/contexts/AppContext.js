@@ -111,6 +111,9 @@ const reducer = (state, action) => {
 				window.wpmpAttachmentBrowserCollection.props
 			) {
 				window.wpmpAttachmentBrowserCollection.props.set('wpmp-folder', folderId);
+
+				// We do this to ensure the media query bypasses cache
+				window.wpmpAttachmentBrowserCollection.props.set('wpmp-cache-bust', Date.now());
 			}
 
 			return {

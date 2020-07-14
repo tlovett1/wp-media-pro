@@ -64,7 +64,7 @@ class Folders extends Module {
 				break;
 			}
 
-			$terms[] = $term;
+			array_unshift( $terms, $term );
 		}
 
 		return $terms;
@@ -90,7 +90,7 @@ class Folders extends Module {
 				$path .= ' &gt; ';
 			}
 
-			$path .= $term->name;
+			$path .= '<a href="' . esc_url( admin_url( 'upload.php#' . $term->slug ) ) . '">' . esc_html( $term->name ) . '</a>';
 		}
 
 		return $path;
@@ -109,7 +109,7 @@ class Folders extends Module {
 		}
 		?>
 		<div class="misc-pub-section misc-pub-dimensions">
-			<?php esc_html_e( 'Folder:', 'wpmp' ); ?> <strong><?php echo esc_html( $folder_path ); ?></strong>
+			<?php esc_html_e( 'Folder:', 'wpmp' ); ?> <strong><?php echo wp_kses_post( $folder_path ); ?></strong>
 		</div>
 		<?php
 	}
@@ -441,6 +441,8 @@ class Folders extends Module {
 	 * Enqueue scripts
 	 */
 	public function enqueue_scripts() {
+		global $pagenow;
+
 		wp_enqueue_media();
 
 		wp_enqueue_script( 'wpmp-folders', WPMP_URL . '/dist/js/folders.js', [ 'wp-edit-post', 'media-views', 'jquery', 'media-models', 'react', 'wp-i18n' ], WPMP_VERSION, true );
@@ -449,8 +451,10 @@ class Folders extends Module {
 			'wpmp-folders',
 			'wpmpFolders',
 			[
-				'nonce'     => wp_create_nonce( 'wpmp_folders' ),
-				'pluginUrl' => WPMP_URL,
+				'nonce'       => wp_create_nonce( 'wpmp_folders' ),
+				'pluginUrl'   => WPMP_URL,
+				'libraryPage' => 'upload.php' === $pagenow,
+
 			]
 		);
 
