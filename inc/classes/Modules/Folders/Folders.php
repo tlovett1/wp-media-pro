@@ -139,10 +139,54 @@ class Folders extends Module {
 	 * Get unique slug for a folder
 	 *
 	 * @param string $name Folder name
+	 * @param int    $parent Parent folder ID if one
 	 * @return string
 	 */
-	public function get_unique_slug( $name ) {
-		return sanitize_key( $name ) . '-' . substr( md5( time() . wp_rand( 0, 10000 ) . $name ), 0, 9 );
+	public function create_folder_slug( $name, $parent = 0 ) {
+		$term_parents = [];
+
+		while ( true ) {
+			if ( empty( $parent ) ) {
+				break;
+			}
+
+			$parent_term = get_term( $parent, self::TAXONOMY_SLUG );
+
+			if ( empty( $parent_term ) ) {
+				break;
+			}
+
+			array_unshift( $term_parents, $parent_term->name );
+
+			$parent = $parent_term->parent;
+		}
+
+		$slug = '';
+
+		if ( ! empty( $term_parents ) ) {
+			foreach ( $term_parents as $parent_name ) {
+				$slug .= sanitize_key( $parent_name ) . '-';
+			}
+		}
+
+		$original_slug = strtolower( $slug . sanitize_key( $name ) );
+		$slug          = $original_slug;
+
+		$i = 1;
+
+		while ( true ) {
+			$term_exists = get_term_by( 'slug', $slug, self::TAXONOMY_SLUG );
+
+			if ( empty( $term_exists ) ) {
+				break;
+			}
+
+			$i++;
+
+			$slug = $original_slug . $i;
+		}
+
+		return $slug;
 	}
 
 	/**
@@ -205,14 +249,15 @@ class Folders extends Module {
 			wp_send_json_error();
 		}
 
-		$name = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+		$name   = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+		$parent = filter_input( INPUT_POST, 'parent', FILTER_SANITIZE_NUMBER_INT );
 
 		$args = [
-			'slug' => $this->get_unique_slug( $name ),
+			'slug' => $this->create_folder_slug( $name, $parent ),
 		];
 
-		if ( ! empty( $_POST['parent'] ) ) {
-			$args['parent'] = absint( $_POST['parent'] );
+		if ( ! empty( $parent ) ) {
+			$args['parent'] = $parent;
 		}
 
 		$new_term = wp_insert_term(
@@ -274,13 +319,16 @@ class Folders extends Module {
 		}
 
 		$folder_id = filter_input( INPUT_POST, 'folderId', FILTER_SANITIZE_NUMBER_INT );
-		$name      = filter_input( INPUT_POST, 'term', FILTER_SANITIZE_STRING );
+		$name      = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+
+		$term = get_term( $_POST['folderId'], self::TAXONOMY_SLUG );
 
 		wp_update_term(
 			$folder_id,
 			self::TAXONOMY_SLUG,
 			[
 				'name' => $name,
+				'slug' => $this->create_folder_slug( $name, $term->parent ),
 			]
 		);
 

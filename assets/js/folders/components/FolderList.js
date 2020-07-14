@@ -3,6 +3,8 @@ import { getFolders } from '../api/folders';
 import { AppContext } from '../contexts/AppContext';
 import FolderListItem from './FolderListItem';
 
+const { __ } = wp.i18n;
+
 const FolderList = () => {
 	const [state, dispatch] = useContext(AppContext);
 
@@ -41,12 +43,18 @@ const FolderList = () => {
 
 	return (
 		<div className={'folders-list ' + (state.loadingFolders ? 'loading' : '')}>
-			{!state.loadingFolders && state.folders && state.folders.length && (
+			{!state.loadingFolders && state.folders && state.folders.length ? (
 				<ul>
 					{state.folders.map((folder) => {
 						return <FolderListItem key={folder.id} folder={folder} />;
 					})}
 				</ul>
+			) : (
+				''
+			)}
+
+			{!state.loadingFolders && state.folders && !state.folders.length && (
+				<>{__('None yet.', 'wpmp')}</>
 			)}
 		</div>
 	);
