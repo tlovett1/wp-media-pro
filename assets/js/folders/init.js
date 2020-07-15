@@ -227,11 +227,14 @@ wp.media.view.AttachmentCompat = wp.media.view.AttachmentCompat.extend({
 			.done((response) => {
 				if (response.data) {
 					folderValue.innerHTML = response.data;
-					folderEl.appendChild(folderLabel);
-					folderEl.appendChild(folderValue);
-
-					el.prepend(folderEl);
+				} else {
+					folderValue.innerText = __('None', 'wpmp');
 				}
+
+				folderEl.appendChild(folderLabel);
+				folderEl.appendChild(folderValue);
+
+				el.prepend(folderEl);
 			});
 	},
 });

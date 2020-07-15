@@ -90,7 +90,7 @@ class Folders extends Module {
 				$path .= ' &gt; ';
 			}
 
-			$path .= '<a href="' . esc_url( admin_url( 'upload.php#' . $term->slug ) ) . '">' . esc_html( $term->name ) . '</a>';
+			$path .= '<a href="' . esc_url( admin_url( 'upload.php?mode=grid#' . $term->slug ) ) . '">' . esc_html( $term->name ) . '</a>';
 		}
 
 		return $path;
