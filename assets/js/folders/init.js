@@ -225,11 +225,13 @@ wp.media.view.AttachmentCompat = wp.media.view.AttachmentCompat.extend({
 				},
 			})
 			.done((response) => {
-				folderValue.innerHTML = response.data;
-				folderEl.appendChild(folderLabel);
-				folderEl.appendChild(folderValue);
+				if (response.data) {
+					folderValue.innerHTML = response.data;
+					folderEl.appendChild(folderLabel);
+					folderEl.appendChild(folderValue);
 
-				el.prepend(folderEl);
+					el.prepend(folderEl);
+				}
 			});
 	},
 });
