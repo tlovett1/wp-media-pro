@@ -3,13 +3,15 @@ module.exports = {
 	entries: {
 		// JS files.
 		taxonomies: './assets/js/taxonomies.js',
-		folders: './assets/js/folders.js',
+		credits: './assets/js/credits.js',
 		folders: './assets/js/folders/init.js',
+		'image-block': './assets/js/blocks/image/block.js',
 
 		// CSS files.
 		'taxonomies-styles': './assets/css/taxonomies.css',
 		'admin-styles': './assets/css/admin.css',
 		'folders-styles': './assets/css/folders.css',
+		'image-block-styles': './assets/css/image-block.css',
 	},
 	filename: {
 		js: 'js/[name].js',

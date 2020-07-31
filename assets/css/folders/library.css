@@ -26,9 +26,14 @@ body.upload-php .wpmp-folders-app h3 {
 
 body.upload-php .media-menu {
 	border-right: 0;
+	background-color: #f1f1f1;
 }
 
 body.upload-php .wpmp-folders-app .folders-list {
 	max-height: none;
 }
 
+body.upload-php .wpmp-folders-app-shell {
+	position: fixed;
+	width: 280px;
+}

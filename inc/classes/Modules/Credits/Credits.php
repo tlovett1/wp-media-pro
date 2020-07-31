@@ -24,6 +24,22 @@ class Credits extends Module {
 
 		add_filter( 'attachment_fields_to_edit', [ $this, 'attachment_fields' ], 10, 2 );
 		add_filter( 'attachment_fields_to_save', [ $this, 'save_fields' ], 10, 2 );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'register_block' ] );
+	}
+
+	public function register_block() {
+		wp_enqueue_script(
+			'wpmp-credits-block',
+			WPMP_URL . '/dist/js/credits.js',
+			[
+				'wp-blocks',
+				'wp-i18n',
+				'wp-element',
+				'wp-editor',
+			],
+			WPMP_VERSION,
+			true
+		);
 	}
 
 	/**
