@@ -5,6 +5,7 @@ module.exports = {
 		taxonomies: './assets/js/taxonomies.js',
 		credits: './assets/js/credits.js',
 		folders: './assets/js/folders/init.js',
+		crops: './assets/js/crops.js',
 		'image-block': './assets/js/blocks/image/block.js',
 
 		// CSS files.

@@ -68,6 +68,7 @@ Modules\Taxonomies\Taxonomies::instance();
 Modules\Folders\Folders::instance();
 Modules\Credits\Credits::instance();
 Modules\SingleView\SingleView::instance();
+Modules\Crops\Crops::instance();
 
 Core\setup();
 Dashboard\setup();
