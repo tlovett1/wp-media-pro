@@ -1,0 +1,13 @@
+.edit-mode label {
+	display: block;
+	margin-bottom: 4px;
+}
+
+.edit-mode select {
+	display: none;
+	margin-top: 10px;
+
+	&.show {
+		display: block;
+	}
+}

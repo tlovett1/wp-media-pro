@@ -5,11 +5,12 @@ module.exports = {
 		taxonomies: './assets/js/taxonomies.js',
 		credits: './assets/js/credits.js',
 		folders: './assets/js/folders/init.js',
-		crops: './assets/js/crops.js',
+		edit: './assets/js/edit.js',
 		'image-block': './assets/js/blocks/image/block.js',
 
 		// CSS files.
 		'taxonomies-styles': './assets/css/taxonomies.css',
+		'edit-styles': './assets/css/edit.css',
 		'admin-styles': './assets/css/admin.css',
 		'folders-styles': './assets/css/folders.css',
 		'image-block-styles': './assets/css/image-block.css',
@@ -59,5 +60,5 @@ module.exports = {
 	externals: {
 		jquery: 'jQuery',
 		window: 'window',
-	}
+	},
 };

@@ -8,6 +8,11 @@
 	left: 280px;
 }
 
+.update-nag,
+.wrap > .notice {
+	margin-left: 290px;
+}
+
 .wpmp-folders-app {
 	padding: 8px 20px;
 }

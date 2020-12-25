@@ -1,7 +1,5 @@
 const { wp, imageEdit, ajaxurl, jQuery } = window;
 
-console.log('crops');
-
 let imageEditInstance = null;
 let nonceInstance = null;
 
@@ -80,5 +78,16 @@ function setup() {
 	imageChanger.addEventListener('change', (event) => {
 		console.log(event);
 		imageEditInstance.openSize(event.target.value);
+	});
+
+	const editModes = document.querySelectorAll('.edit-mode input[name="edit_type"]');
+	editModes.forEach((editMode) => {
+		editMode.addEventListener('change', (event) => {
+			if (event.target.value === 'individual') {
+				imageChanger.classList.add('show');
+			} else {
+				imageChanger.classList.remove('show');
+			}
+		});
 	});
 }
