@@ -147,7 +147,6 @@ class Edit extends Module {
 		$meta      = wp_get_attachment_metadata( $post_id );
 		$thumb     = image_get_intermediate_size( $post_id, 'thumbnail' );
 		$sub_sizes = isset( $meta['sizes'] ) && is_array( $meta['sizes'] );
-		$note      = '';
 
 		$sizes = get_intermediate_image_sizes();
 		if ( isset( $meta['width'], $meta['height'] ) ) {
@@ -172,7 +171,22 @@ class Edit extends Module {
 			}
 		}
 
+		$size_width  = $meta['width'];
+		$size_height = $meta['height'];
+
+		if ( ! empty( $size ) && ! empty( $meta['sizes'] ) && ! empty( $meta['sizes'][ $size ] ) ) {
+			$size_width  = $meta['sizes'][ $size ]['width'];
+			$size_height = $meta['sizes'][ $size ]['height'];
+		}
+
+		$target = 'all';
+
+		if ( ! empty( $size ) ) {
+			$target = $size;
+		}
+
 		?>
+		<span class="wpmp-image-target" id="imgedit-save-target-<?php echo (int) $post_id; ?>"><input name="imgedit-target-<?php echo (int) $post_id; ?>" checked="checked" type="radio" value="<?php echo esc_attr( $target ); ?>" /></span>
 		<div class="imgedit-wrap wp-clearfix">
 			<div id="imgedit-panel-<?php echo (int) $post_id; ?>">
 				<div class="imgedit-settings">
@@ -180,17 +194,17 @@ class Edit extends Module {
 						<div class="imgedit-group-top edit-mode">
 							<h2><?php _e( 'Edit Mode' ); ?></h2>
 							<label>
-							<input type="radio" <?php checked( empty( $size ) ); ?> value="all" name="edit_type">
-							Edit all image sizes
+								<input type="radio" <?php checked( empty( $size ) ); ?> value="all" name="edit_type">
+								Edit all image sizes
 							</label>
 							<label>
-							<input type="radio" <?php checked( ! empty( $size ) ); ?> value="individual" name="edit_type">
-							Edit individual image size
+								<input type="radio" <?php checked( ! empty( $size ) ); ?> value="individual" name="edit_type">
+								Edit individual image size
 							</label>
 							<select class="wpmp-image-size <?php if ( $size ) : ?>show<?php endif; ?>">
 								<option>Full Size</option>
-								<?php foreach ( $sizes as $size_option ) : ?>
-								<option <?php selected( $size === $size_option ); ?>><?php echo esc_html( $size_option ); ?></option>
+								<?php foreach ( $meta['sizes'] as $size_option => $size_info ) : ?>
+									<option <?php selected( $size === $size_option ); ?>><?php echo esc_html( $size_option ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
@@ -202,13 +216,13 @@ class Edit extends Module {
 							<div class="imgedit-help">
 								<p><?php _e( 'You can proportionally scale the original image. For best results, scaling should be done before you crop, flip, or rotate. Images can only be scaled down, not up.' ); ?></p>
 							</div>
-							<?php if ( isset( $meta['width'], $meta['height'] ) ) : ?>
+							<?php if ( isset( $size_width, $size_height ) ) : ?>
 							<p>
 								<?php
 									printf(
 										/* translators: %s: Image width and height in pixels. */
-										__( 'Original dimensions %s' ),
-										'<span class="imgedit-original-dimensions">' . $meta['width'] . ' &times; ' . $meta['height'] . '</span>'
+										__( 'Original size dimensions %s' ),
+										'<span class="imgedit-original-dimensions">' . (int) $size_width . ' &times; ' . (int) $size_height . '</span>'
 									);
 									?>
 							</p>
@@ -217,11 +231,11 @@ class Edit extends Module {
 								<fieldset class="imgedit-scale">
 									<legend><?php _e( 'New dimensions:' ); ?></legend>
 									<div class="nowrap">
-										<label for="imgedit-scale-width-<?php echo $post_id; ?>" class="screen-reader-text"><?php _e( 'scale width' ); ?></label>
-										<input type="text" id="imgedit-scale-width-<?php echo $post_id; ?>" onkeyup="imageEdit.scaleChanged(<?php echo $post_id; ?>, 1, this)" onblur="imageEdit.scaleChanged(<?php echo $post_id; ?>, 1, this)" value="<?php echo isset( $meta['width'] ) ? $meta['width'] : 0; ?>" />
+										<label for="imgedit-scale-width-<?php echo (int) $post_id; ?>" class="screen-reader-text"><?php _e( 'scale width' ); ?></label>
+										<input type="text" id="imgedit-scale-width-<?php echo (int) $post_id; ?>" onkeyup="imageEdit.scaleChanged(<?php echo (int) $post_id; ?>, 1, this)" onblur="imageEdit.scaleChanged(<?php echo (int) $post_id; ?>, 1, this)" value="<?php echo (int) $size_width; ?>" />
 										<span class="imgedit-separator" aria-hidden="true">&times;</span>
-										<label for="imgedit-scale-height-<?php echo $post_id; ?>" class="screen-reader-text"><?php _e( 'scale height' ); ?></label>
-										<input type="text" id="imgedit-scale-height-<?php echo $post_id; ?>" onkeyup="imageEdit.scaleChanged(<?php echo $post_id; ?>, 0, this)" onblur="imageEdit.scaleChanged(<?php echo $post_id; ?>, 0, this)" value="<?php echo isset( $meta['height'] ) ? $meta['height'] : 0; ?>" />
+										<label for="imgedit-scale-height-<?php echo (int) $post_id; ?>" class="screen-reader-text"><?php _e( 'scale height' ); ?></label>
+										<input type="text" id="imgedit-scale-height-<?php echo (int) $post_id; ?>" onkeyup="imageEdit.scaleChanged(<?php echo (int) $post_id; ?>, 0, this)" onblur="imageEdit.scaleChanged(<?php echo (int) $post_id; ?>, 0, this)" value="<?php echo (int) $size_height; ?>" />
 										<span class="imgedit-scale-warn" id="imgedit-scale-warn-<?php echo $post_id; ?>">!</span>
 										<div class="imgedit-scale-button-wrapper"><input id="imgedit-scale-button" type="button" onclick="imageEdit.action(<?php echo "$post_id, '$nonce'"; ?>, 'scale')" class="button button-primary" value="<?php esc_attr_e( 'Scale' ); ?>" /></div>
 									</div>
@@ -230,25 +244,25 @@ class Edit extends Module {
 						</div>
 					</div>
 					<?php if ( $can_restore ) { ?>
-					<div class="imgedit-group">
-						<div class="imgedit-group-top">
-							<h2><button type="button" onclick="imageEdit.toggleHelp(this);" class="button-link"><?php _e( 'Restore Original Image' ); ?> <span class="dashicons dashicons-arrow-down imgedit-help-toggle"></span></button></h2>
-							<div class="imgedit-help imgedit-restore">
-								<p>
-									<?php
-										_e( 'Discard any changes and restore the original image.' );
+						<div class="imgedit-group">
+							<div class="imgedit-group-top">
+								<h2><button type="button" onclick="imageEdit.toggleHelp(this);" class="button-link"><?php _e( 'Restore Original Image' ); ?> <span class="dashicons dashicons-arrow-down imgedit-help-toggle"></span></button></h2>
+								<div class="imgedit-help imgedit-restore">
+									<p>
+										<?php
+											_e( 'Discard any changes and restore the original image.' );
 
-										if ( ! defined( 'IMAGE_EDIT_OVERWRITE' ) || ! IMAGE_EDIT_OVERWRITE ) {
-											echo ' ' . __( 'Previously edited copies of the image will not be deleted.' );
-										}
-										?>
-								</p>
-								<div class="imgedit-submit">
-									<input type="button" onclick="imageEdit.action(<?php echo "$post_id, '$nonce'"; ?>, 'restore')" class="button button-primary" value="<?php esc_attr_e( 'Restore image' ); ?>" <?php echo $can_restore; ?> />
+											if ( ! defined( 'IMAGE_EDIT_OVERWRITE' ) || ! IMAGE_EDIT_OVERWRITE ) {
+												echo ' ' . __( 'Previously edited copies of the image will not be deleted.' );
+											}
+											?>
+									</p>
+									<div class="imgedit-submit">
+										<input type="button" onclick="imageEdit.action(<?php echo "$post_id, '$nonce'"; ?>, 'restore')" class="button button-primary" value="<?php esc_attr_e( 'Restore image' ); ?>" <?php echo $can_restore; ?> />
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 					<?php } ?>
 					<div class="imgedit-group">
 						<div class="imgedit-group-top">

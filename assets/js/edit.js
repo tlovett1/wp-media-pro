@@ -2,6 +2,7 @@ const { wp, imageEdit, ajaxurl, jQuery } = window;
 
 let imageEditInstance = null;
 let nonceInstance = null;
+let currentSize = null;
 
 imageEdit.oldInit = imageEdit.init;
 imageEdit.oldOpen = imageEdit.open;
@@ -20,6 +21,98 @@ imageEdit.open = function (postid, nonce, view) {
 	return this.oldOpen(postid, nonce, view);
 };
 
+/**
+ * Binds the necessary events to the image.
+ *
+ * When the image source is reloaded the image will be reloaded.
+ *
+ * @since 2.9.0
+ *
+ * @memberof imageEdit
+ *
+ * @param {number}   postid   The post id.
+ * @param {string}   nonce    The nonce to verify the request.
+ * @param {Function} callback Function to execute when the image is loaded.
+ *
+ * @return {void}
+ */
+imageEdit.refreshEditor = function (postid, nonce, callback) {
+	const t = this;
+
+	t.toggleEditor(postid, 1);
+	const data = {
+		action: 'wpmp_edit_preview',
+		_ajax_nonce: nonce,
+		postid,
+		history: t.filterHistory(postid, 1),
+		rand: t.intval(Math.random() * 1000000),
+	};
+
+	if (currentSize) {
+		data.size = currentSize;
+	}
+
+	const img = jQuery('<img id="image-preview-' + postid + '" alt="" />')
+		.on('load', { history: data.history }, function (event) {
+			let max1;
+			let max2;
+			const parent = jQuery('#imgedit-crop-' + postid);
+			const t = imageEdit;
+			let historyObj;
+
+			// Checks if there already is some image-edit history.
+			if (event.data.history !== '') {
+				historyObj = JSON.parse(event.data.history);
+				// If last executed action in history is a crop action.
+				if (historyObj[historyObj.length - 1].hasOwnProperty('c')) {
+					/*
+					 * A crop action has completed and the crop button gets disabled
+					 * ensure the undo button is enabled.
+					 */
+					t.setDisabled(jQuery('#image-undo-' + postid), true);
+					// Move focus to the undo button to avoid a focus loss.
+					jQuery('#image-undo-' + postid).focus();
+				}
+			}
+
+			parent.empty().append(img);
+
+			// w, h are the new full size dimensions.
+			max1 = Math.max(t.hold.w, t.hold.h);
+			max2 = Math.max(jQuery(img).width(), jQuery(img).height());
+			t.hold.sizer = max1 > max2 ? max2 / max1 : 1;
+
+			t.initCrop(postid, img, parent);
+
+			if (typeof callback !== 'undefined' && callback !== null) {
+				callback();
+			}
+
+			if (
+				jQuery('#imgedit-history-' + postid).val() &&
+				jQuery('#imgedit-undone-' + postid).val() === '0'
+			) {
+				jQuery('input.imgedit-submit-btn', '#imgedit-panel-' + postid).removeAttr(
+					'disabled',
+				);
+			} else {
+				jQuery('input.imgedit-submit-btn', '#imgedit-panel-' + postid).prop(
+					'disabled',
+					true,
+				);
+			}
+
+			t.toggleEditor(postid, 0);
+		})
+		.on('error', function () {
+			jQuery('#imgedit-crop-' + postid)
+				.empty()
+				.append('<div class="error"><p>' + imageEditL10n.error + '</p></div>');
+			t.toggleEditor(postid, 0);
+		})
+		.attr('src', ajaxurl + '?' + jQuery.param(data));
+};
+
 imageEdit.openSize = function (size) {
 	const { postid } = this;
 	const view = this._view;
@@ -30,6 +123,8 @@ imageEdit.openSize = function (size) {
 	const head = jQuery('#media-head-' + postid);
 	const btn = jQuery('#imgedit-open-btn-' + postid);
 	const spin = btn.siblings('.spinner');
+
+	currentSize = size;
 
 	/*
 	 * Instead of disabling the button, which causes a focus loss and makes screen

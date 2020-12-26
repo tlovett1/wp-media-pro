@@ -3,6 +3,10 @@
 	margin-bottom: 4px;
 }
 
+.media-modal .imgedit-group-top.edit-mode h2 {
+	margin-bottom: 8px;
+}
+
 .edit-mode select {
 	display: none;
 	margin-top: 10px;
@@ -10,4 +14,8 @@
 	&.show {
 		display: block;
 	}
+}
+
+.wpmp-image-target {
+	display: none;
 }
