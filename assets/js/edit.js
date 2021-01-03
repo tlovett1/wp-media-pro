@@ -10,8 +10,6 @@ imageEdit.oldOpen = imageEdit.open;
 imageEdit.init = function (postId) {
 	this.oldInit(postId);
 
-	setup();
-
 	imageEditInstance = this;
 };
 
@@ -167,22 +165,89 @@ imageEdit.openSize = function (size) {
 	return dfd;
 };
 
-function setup() {
+/**
+ * Performs an image edit action.
+ *
+ * @since 2.9.0
+ * @memberof imageEdit
+ * @param {number} postid The post id.
+ * @param {string} nonce  The nonce to verify the request.
+ * @param {string} action The action to perform on the image.
+ * @param {string} size Image size
+ * The possible actions are: "scale" and "restore".
+ * @return {boolean|void} Executes a post request that refreshes the page
+ * when the action is performed.
+ * Returns false if a invalid action is given,
+ * or when the action cannot be performed.
+ */
+imageEdit.action = function (postid, nonce, action, size) {
+	const t = this;
+	let w;
+	let h;
+	let fw;
+	let fh;
+
+	if (t.notsaved(postid)) {
+		return false;
+	}
+
+	const data = {
+		action: 'image-editor',
+		_ajax_nonce: nonce,
+		postid,
+		target: size,
+	};
+
+	if (action === 'scale') {
+		(w = jQuery('#imgedit-scale-width-' + postid)),
+			(h = jQuery('#imgedit-scale-height-' + postid)),
+			(fw = t.intval(w.val())),
+			(fh = t.intval(h.val()));
+
+		if (fw < 1) {
+			w.focus();
+			return false;
+		}
+		if (fh < 1) {
+			h.focus();
+			return false;
+		}
+
+		if (fw === t.hold.ow || fh === t.hold.oh) {
+			return false;
+		}
+
+		data.do = 'scale';
+		data.fwidth = fw;
+		data.fheight = fh;
+	} else if (action === 'restore') {
+		data.do = 'restore';
+	} else {
+		return false;
+	}
+
+	t.toggleEditor(postid, 1);
+	jQuery.post(ajaxurl, data, function (r) {
+		jQuery('#image-editor-' + postid)
+			.empty()
+			.append(r);
+		t.toggleEditor(postid, 0);
+		// Refresh the attachment model so that changes propagate.
+		if (t._view) {
+			t._view.refresh();
+		}
+	});
+};
+
+imageEdit.onEditModeChange = (value) => {
 	const imageChanger = document.querySelector('.wpmp-image-size');
+	if (value === 'individual') {
+		imageChanger.classList.add('show');
+	} else {
+		imageChanger.classList.remove('show');
+	}
+};
 
-	imageChanger.addEventListener('change', (event) => {
-		console.log(event);
-		imageEditInstance.openSize(event.target.value);
-	});
-
-	const editModes = document.querySelectorAll('.edit-mode input[name="edit_type"]');
-	editModes.forEach((editMode) => {
-		editMode.addEventListener('change', (event) => {
-			if (event.target.value === 'individual') {
-				imageChanger.classList.add('show');
-			} else {
-				imageChanger.classList.remove('show');
-			}
-		});
-	});
-}
+imageEdit.onSizeChange = (size) => {
+	imageEditInstance.openSize(size);
+};
