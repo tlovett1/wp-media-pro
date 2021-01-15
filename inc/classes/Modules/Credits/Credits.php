@@ -69,7 +69,7 @@ class Credits extends Module {
 	 */
 	public function attachment_fields( $form_fields, $post ) {
 		$form_fields['wpmp_credits'] = [
-			'label' => esc_html__( 'Credits' ),
+			'label' => esc_html__( 'Credits', 'wpmp' ),
 			'class' => 'widefat',
 			'value' => sanitize_text_field( get_post_meta( $post->ID, 'wpmp_credits', true ) ),
 			'input' => 'text',
