@@ -1,4 +1,4 @@
-const { wp, imageEdit, ajaxurl, jQuery } = window;
+const { imageEdit, ajaxurl, jQuery, imageEditL10n } = window;
 
 let imageEditInstance = null;
 let nonceInstance = null;
@@ -52,8 +52,6 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 
 	const img = jQuery('<img id="image-preview-' + postid + '" alt="" />')
 		.on('load', { history: data.history }, function (event) {
-			let max1;
-			let max2;
 			const parent = jQuery('#imgedit-crop-' + postid);
 			const t = imageEdit;
 			let historyObj;
@@ -76,8 +74,8 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 			parent.empty().append(img);
 
 			// w, h are the new full size dimensions.
-			max1 = Math.max(t.hold.w, t.hold.h);
-			max2 = Math.max(jQuery(img).width(), jQuery(img).height());
+			const max1 = Math.max(t.hold.w, t.hold.h);
+			const max2 = Math.max(jQuery(img).width(), jQuery(img).height());
 			t.hold.sizer = max1 > max2 ? max2 / max1 : 1;
 
 			t.initCrop(postid, img, parent);
@@ -113,14 +111,7 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 
 imageEdit.openSize = function (size) {
 	const { postid } = this;
-	const view = this._view;
-
-	let dfd;
-	let data;
-	const elem = jQuery('#image-editor-' + postid);
-	const head = jQuery('#media-head-' + postid);
 	const btn = jQuery('#imgedit-open-btn-' + postid);
-	const spin = btn.siblings('.spinner');
 
 	currentSize = size;
 
@@ -129,20 +120,27 @@ imageEdit.openSize = function (size) {
 	 * readers announce "unavailable", return if the button was already clicked.
 	 */
 	if (btn.hasClass('button-activated')) {
-		return;
+		return null;
 	}
+
+	const elem = jQuery('#image-editor-' + postid);
+	const head = jQuery('#media-head-' + postid);
+	const spin = btn.siblings('.spinner');
 
 	spin.addClass('is-active');
 
-	data = {
+	const data = {
 		action: 'image-editor',
 		_ajax_nonce: nonceInstance,
 		postid,
 		do: 'open',
-		size,
 	};
 
-	dfd = jQuery
+	if (size) {
+		data.size = size;
+	}
+
+	const dfd = jQuery
 		.ajax({
 			url: ajaxurl,
 			type: 'post',
@@ -182,11 +180,6 @@ imageEdit.openSize = function (size) {
  */
 imageEdit.action = function (postid, nonce, action, size) {
 	const t = this;
-	let w;
-	let h;
-	let fw;
-	let fh;
-
 	if (t.notsaved(postid)) {
 		return false;
 	}
@@ -199,10 +192,10 @@ imageEdit.action = function (postid, nonce, action, size) {
 	};
 
 	if (action === 'scale') {
-		(w = jQuery('#imgedit-scale-width-' + postid)),
-			(h = jQuery('#imgedit-scale-height-' + postid)),
-			(fw = t.intval(w.val())),
-			(fh = t.intval(h.val()));
+		const w = jQuery('#imgedit-scale-width-' + postid);
+		const h = jQuery('#imgedit-scale-height-' + postid);
+		const fw = t.intval(w.val());
+		const fh = t.intval(h.val());
 
 		if (fw < 1) {
 			w.focus();
@@ -237,6 +230,8 @@ imageEdit.action = function (postid, nonce, action, size) {
 			t._view.refresh();
 		}
 	});
+
+	return true;
 };
 
 imageEdit.onEditModeChange = (value) => {
@@ -244,6 +239,7 @@ imageEdit.onEditModeChange = (value) => {
 	if (value === 'individual') {
 		imageChanger.classList.add('show');
 	} else {
+		imageEditInstance.openSize(null);
 		imageChanger.classList.remove('show');
 	}
 };
