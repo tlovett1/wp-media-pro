@@ -53,19 +53,18 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 	const img = jQuery('<img id="image-preview-' + postid + '" alt="" />')
 		.on('load', { history: data.history }, function (event) {
 			const parent = jQuery('#imgedit-crop-' + postid);
-			const t = imageEdit;
 			let historyObj;
 
 			// Checks if there already is some image-edit history.
 			if (event.data.history !== '') {
 				historyObj = JSON.parse(event.data.history);
 				// If last executed action in history is a crop action.
-				if (historyObj[historyObj.length - 1].hasOwnProperty('c')) {
+				if (historyObj[historyObj.length - 1].c) {
 					/*
 					 * A crop action has completed and the crop button gets disabled
 					 * ensure the undo button is enabled.
 					 */
-					t.setDisabled(jQuery('#image-undo-' + postid), true);
+					imageEdit.setDisabled(jQuery('#image-undo-' + postid), true);
 					// Move focus to the undo button to avoid a focus loss.
 					jQuery('#image-undo-' + postid).focus();
 				}
@@ -76,9 +75,9 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 			// w, h are the new full size dimensions.
 			const max1 = Math.max(t.hold.w, t.hold.h);
 			const max2 = Math.max(jQuery(img).width(), jQuery(img).height());
-			t.hold.sizer = max1 > max2 ? max2 / max1 : 1;
+			imageEdit.hold.sizer = max1 > max2 ? max2 / max1 : 1;
 
-			t.initCrop(postid, img, parent);
+			imageEdit.initCrop(postid, img, parent);
 
 			if (typeof callback !== 'undefined' && callback !== null) {
 				callback();
@@ -98,7 +97,7 @@ imageEdit.refreshEditor = function (postid, nonce, callback) {
 				);
 			}
 
-			t.toggleEditor(postid, 0);
+			imageEdit.toggleEditor(postid, 0);
 		})
 		.on('error', function () {
 			jQuery('#imgedit-crop-' + postid)
