@@ -26,6 +26,10 @@ WP Media Pro is the must-have toolkit for all WordPress websites that seriously 
 
 == Changelog ==
 
+= 1.1.1 =
+* Don't double render folder in attachment sidebar.
+* Make sure media tag JS fires correctly
+
 = 1.1 =
 
 * Add edit image size functionality

@@ -201,6 +201,12 @@ wp.media.view.AttachmentCompat = wp.media.view.AttachmentCompat.extend({
 	render() {
 		currentAttachmentCompat.prototype.render.apply(this);
 
+		if (this.renderedFolder) {
+			return;
+		}
+
+		this.renderedFolder = true;
+
 		const folderEl = document.createElement('span');
 		folderEl.classList.add('setting');
 

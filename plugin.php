@@ -3,7 +3,7 @@
  * Plugin Name: WP Media Pro
  * Plugin URI: https://wordpress.org/plugins/wp-media-pro
  * Description: The must have media toolkit for WordPress. Organize media and images into folders, media tags, image credits, and much more.
- * Version:     1.1
+ * Version:     1.1.1
  * Author:      Taylor Lovett
  * Author URI:  https://taylorlovett.com
  * Text Domain: wpmp

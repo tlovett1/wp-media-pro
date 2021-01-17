@@ -49,58 +49,113 @@ wp.media.view.AttachmentsBrowser = wp.media.view.AttachmentsBrowser.extend({
 
 jQuery(document).ready(() => {
 	wp.media.view.AttachmentCompat.prototype.on('ready', () => {
-		const tagRow = document.querySelector('.compat-field-wpmp-media-tag');
+		// For some reason block editor doesn't work without the delay
+		setTimeout(() => {
+			const tagRow = document.querySelector('.compat-field-wpmp-media-tag');
 
-		if (!tagRow) {
-			return;
-		}
-		const tagField = tagRow.querySelector('input');
-		tagField.value = '';
+			if (!tagRow) {
+				return;
+			}
+			const tagField = tagRow.querySelector('input');
+			tagField.value = '';
 
-		const attachmentId = tagField.name.replace(/^attachments\[([0-9]+)\].*$/, '$1');
+			const attachmentId = tagField.name.replace(/^attachments\[([0-9]+)\].*$/, '$1');
 
-		if (!attachmentId) {
-			return;
-		}
-
-		const addButton = document.createElement('input');
-		addButton.type = 'button';
-		addButton.classList.add('button', 'tagadd');
-		addButton.value = 'Add';
-
-		tagField.parentNode.appendChild(addButton);
-
-		let tagList = null;
-
-		function setupTagList() {
-			if (tagList) {
+			if (!attachmentId) {
 				return;
 			}
 
-			tagList = document.createElement('ul');
-			tagList.classList.add('tagchecklist');
-			tagField.parentNode.appendChild(tagList);
-		}
+			const addButton = document.createElement('input');
+			addButton.type = 'button';
+			addButton.classList.add('button', 'tagadd');
+			addButton.value = 'Add';
 
-		function addTag(id, name) {
-			setupTagList();
+			tagField.parentNode.appendChild(addButton);
 
-			const tag = document.createElement('li');
-			tag.innerHTML =
-				'<button data-term-id="' +
-				id +
-				'" type="button" class="ntdelbutton"><span class="remove-tag-icon" aria-hidden="true"></span><span class="screen-reader-text">Remove term: ' +
-				name +
-				'</span></button> &nbsp;' +
-				name;
-			tagList.appendChild(tag);
-		}
+			let tagList = null;
 
-		function handleAdd(event) {
-			event.preventDefault();
-			event.stopPropagation();
+			function setupTagList() {
+				if (tagList) {
+					return;
+				}
 
-			tagField.classList.add('ui-autocomplete-loading');
+				tagList = document.createElement('ul');
+				tagList.classList.add('tagchecklist');
+				tagField.parentNode.appendChild(tagList);
+			}
+
+			function addTag(id, name) {
+				setupTagList();
+
+				const tag = document.createElement('li');
+				tag.innerHTML =
+					'<button data-term-id="' +
+					id +
+					'" type="button" class="ntdelbutton"><span class="remove-tag-icon" aria-hidden="true"></span><span class="screen-reader-text">Remove term: ' +
+					name +
+					'</span></button> &nbsp;' +
+					name;
+				tagList.appendChild(tag);
+			}
+
+			function handleAdd(event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				tagField.classList.add('ui-autocomplete-loading');
+
+				jQuery
+					.ajax({
+						url: ajaxurl,
+						method: 'post',
+						data: {
+							nonce: wpmpTaxonomies.nonce,
+							postId: attachmentId,
+							term: tagField.value,
+							taxonomy: 'wpmp-media-tag',
+							action: 'wpmp_add_taxonomy_term',
+						},
+					})
+					.done((response) => {
+						addTag(response.data.term_id, response.data.name);
+
+						tagField.value = '';
+					})
+					.always(() => {
+						tagField.classList.remove('ui-autocomplete-loading');
+					});
+
+				return false;
+			}
+
+			jQuery(tagField).on('keyup change', (event) => {
+				event.stopPropagation();
+				event.preventDefault();
+
+				if (event.keyCode === 13) {
+					handleAdd(event);
+				}
+
+				return false;
+			});
+
+			addButton.onclick = handleAdd;
+
+			jQuery(tagRow).on('click', '.ntdelbutton', (event) => {
+				jQuery.ajax({
+					url: ajaxurl,
+					method: 'post',
+					data: {
+						nonce: wpmpTaxonomies.nonce,
+						postId: attachmentId,
+						termId: event.currentTarget.getAttribute('data-term-id'),
+						taxonomy: 'wpmp-media-tag',
+						action: 'wpmp_remove_taxonomy_term',
+					},
+				});
+
+				event.currentTarget.parentNode.remove();
+			});
 
 			jQuery
 				.ajax({
@@ -109,69 +164,17 @@ jQuery(document).ready(() => {
 					data: {
 						nonce: wpmpTaxonomies.nonce,
 						postId: attachmentId,
-						term: tagField.value,
 						taxonomy: 'wpmp-media-tag',
-						action: 'wpmp_add_taxonomy_term',
+						action: 'wpmp_get_taxonomy_terms',
 					},
 				})
 				.done((response) => {
-					addTag(response.data.term_id, response.data.name);
-
-					tagField.value = '';
-				})
-				.always(() => {
-					tagField.classList.remove('ui-autocomplete-loading');
+					if (response.data.length) {
+						response.data.forEach((term) => {
+							addTag(term.term_id, term.name);
+						});
+					}
 				});
-
-			return false;
-		}
-
-		jQuery(tagField).on('keyup change', (event) => {
-			event.stopPropagation();
-			event.preventDefault();
-
-			if (event.keyCode === 13) {
-				handleAdd(event);
-			}
-
-			return false;
-		});
-
-		addButton.onclick = handleAdd;
-
-		jQuery(tagRow).on('click', '.ntdelbutton', (event) => {
-			jQuery.ajax({
-				url: ajaxurl,
-				method: 'post',
-				data: {
-					nonce: wpmpTaxonomies.nonce,
-					postId: attachmentId,
-					termId: event.currentTarget.getAttribute('data-term-id'),
-					taxonomy: 'wpmp-media-tag',
-					action: 'wpmp_remove_taxonomy_term',
-				},
-			});
-
-			event.currentTarget.parentNode.remove();
-		});
-
-		jQuery
-			.ajax({
-				url: ajaxurl,
-				method: 'post',
-				data: {
-					nonce: wpmpTaxonomies.nonce,
-					postId: attachmentId,
-					taxonomy: 'wpmp-media-tag',
-					action: 'wpmp_get_taxonomy_terms',
-				},
-			})
-			.done((response) => {
-				if (response.data.length) {
-					response.data.forEach((term) => {
-						addTag(term.term_id, term.name);
-					});
-				}
-			});
+		}, 300);
 	});
 });
