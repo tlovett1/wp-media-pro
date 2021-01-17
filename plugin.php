@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Useful global constants.
-define( 'WPMP_VERSION', '1.1' );
+define( 'WPMP_VERSION', '1.1.1' );
 define( 'WPMP_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPMP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPMP_INC', WPMP_PATH . 'inc/' );
