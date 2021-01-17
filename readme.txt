@@ -3,7 +3,7 @@ Contributors: tlovett1
 Author URI: https://taylorlovett.com
 Plugin URI: https://github.com/tlovett1/wp-media-pro
 Tags: media, images, image tags, media categories, media folders, image folders, media organization, edit image sizes, srcset
-Requires at least: 5.3
+Requires at least: 5.6
 Tested up to: 5.7
 Stable tag: trunk
 License: GPLv2 or later
@@ -29,6 +29,7 @@ WP Media Pro is the must-have toolkit for all WordPress websites that seriously 
 = 1.1.1 =
 * Don't double render folder in attachment sidebar.
 * Make sure media tag JS fires correctly
+* Fix compatibility with WP 5.6
 
 = 1.1 =
 

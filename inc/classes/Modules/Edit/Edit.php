@@ -124,8 +124,11 @@ class Edit extends Module {
 		switch ( $_POST['do'] ) {
 			case 'save':
 				$msg = $this->save_image( $attachment_id );
-				$msg = wp_json_encode( $msg );
-				wp_die( $msg );
+				if ( ! empty( $msg->error ) ) {
+					wp_send_json_error( $msg );
+				}
+
+				wp_send_json_success( $msg );
 				break;
 			case 'scale':
 				$msg = $this->save_image( $attachment_id );
@@ -135,14 +138,31 @@ class Edit extends Module {
 				}
 				break;
 			case 'restore':
-				$msg = $this->restore_image( $attachment_id );
+				$msg = $this->restore_image( $attachment_id, ( ! empty( $_REQUEST['target'] ) && 'all' !== $_REQUEST['target'] ) ? $_REQUEST['target'] : null );
 				break;
 		}
 
-		$size = ( ! empty( $_POST['size'] ) ) ? $_POST['size'] : null;
+		$size = ( ! empty( $_POST['size'] ) && 'all' !== $_POST['size'] ) ? $_POST['size'] : null;
 
+		ob_start();
 		$this->image_editor( $attachment_id, $msg, $size );
-		wp_die();
+		$html = ob_get_clean();
+
+		if ( ! empty( $msg->error ) ) {
+			wp_send_json_error(
+				array(
+					'message' => $msg,
+					'html'    => $html,
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'message' => $msg,
+				'html'    => $html,
+			)
+		);
 	}
 
 	/**
@@ -190,7 +210,7 @@ class Edit extends Module {
 				$meta['height'] = $data['height'];
 			}
 		} else {
-			$restored_file = true;
+			$restored = true;
 		}
 
 		$process_sizes = [];
@@ -567,6 +587,9 @@ class Edit extends Module {
 							<?php endif ?>
 							<div class="imgedit-submit">
 								<fieldset class="imgedit-scale">
+									<input type="hidden" name="wpmp-current-width-<?php echo (int) $post_id; ?>" value="<?php echo (int) $size_width; ?>">
+									<input type="hidden" name="wpmp-current-height-<?php echo (int) $post_id; ?>" value="<?php echo (int) $size_height; ?>">
+
 									<legend><?php _e( 'New dimensions:' ); ?></legend>
 									<div class="nowrap">
 										<label for="imgedit-scale-width-<?php echo (int) $post_id; ?>" class="screen-reader-text"><?php _e( 'scale width' ); ?></label>

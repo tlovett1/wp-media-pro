@@ -1,4 +1,4 @@
-const { imageEdit, ajaxurl, jQuery, imageEditL10n } = window;
+const { imageEdit, ajaxurl, jQuery, imageEditL10n, wp, document } = window;
 
 let imageEditInstance = null;
 let nonceInstance = null;
@@ -143,12 +143,14 @@ imageEdit.openSize = function (size) {
 		.ajax({
 			url: ajaxurl,
 			type: 'post',
+			dataType: 'json',
 			data,
 			beforeSend() {
 				btn.addClass('button-activated');
 			},
 		})
-		.done(function (html) {
+		.done(function (response) {
+			const { html } = response.data;
 			elem.html(html);
 			head.fadeOut('fast', function () {
 				elem.fadeIn('fast');
@@ -219,18 +221,76 @@ imageEdit.action = function (postid, nonce, action, size) {
 	}
 
 	t.toggleEditor(postid, 1);
-	jQuery.post(ajaxurl, data, function (r) {
-		jQuery('#image-editor-' + postid)
-			.empty()
-			.append(r);
-		t.toggleEditor(postid, 0);
-		// Refresh the attachment model so that changes propagate.
-		if (t._view) {
-			t._view.refresh();
-		}
-	});
+	jQuery
+		.post(ajaxurl, data, function (response) {
+			jQuery('#image-editor-' + postid)
+				.empty()
+				.append(response.data.html);
+			t.toggleEditor(postid, 0, true);
+			// Refresh the attachment model so that changes propagate.
+			if (t._view) {
+				t._view.refresh();
+			}
+		})
+		.done(function (response) {
+			// Whether the executed action was `scale` or `restore`, the response does have a message.
+			if (response && response.data.message.msg) {
+				wp.a11y.speak(response.data.message.msg);
+				return;
+			}
+
+			if (response && response.data.message.error) {
+				wp.a11y.speak(response.data.message.error);
+			}
+		});
 
 	return true;
+};
+
+/**
+ * Recalculates the height or width and keeps the original aspect ratio.
+ *
+ * If the original image size is exceeded a red exclamation mark is shown.
+ *
+ * @since 2.9.0
+ *
+ * @memberof imageEdit
+ *
+ * @param {number}         postid The current post ID.
+ * @param {number}         x      Is 0 when it applies the y-axis
+ *                                and 1 when applicable for the x-axis.
+ * @param {jQuery}         el     Element.
+ *
+ * @return {void}
+ */
+imageEdit.scaleChanged = function (postid, x, el) {
+	const w = jQuery('#imgedit-scale-width-' + postid);
+	const h = jQuery('#imgedit-scale-height-' + postid);
+	const warn = jQuery('#imgedit-scale-warn-' + postid);
+	let w1 = '';
+	let h1 = '';
+
+	const ratio =
+		document.querySelector('input[name="wpmp-current-width-' + postid + '"]').value /
+		document.querySelector('input[name="wpmp-current-height-' + postid + '"]').value;
+
+	if (this.validateNumeric(el) === false) {
+		return;
+	}
+
+	if (x) {
+		h1 = w.val() !== '' ? Math.round(w.val() / ratio) : '';
+		h.val(h1);
+	} else {
+		w1 = h.val() !== '' ? Math.round(h.val() * ratio) : '';
+		w.val(w1);
+	}
+
+	if ((h1 && h1 > this.hold.oh) || (w1 && w1 > this.hold.ow)) {
+		warn.css('visibility', 'visible');
+	} else {
+		warn.css('visibility', 'hidden');
+	}
 };
 
 imageEdit.onEditModeChange = (value) => {
