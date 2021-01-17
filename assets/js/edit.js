@@ -264,9 +264,6 @@ imageEdit.action = function (postid, nonce, action, size) {
  * @return {void}
  */
 imageEdit.scaleChanged = function (postid, x, el) {
-	const w = jQuery('#imgedit-scale-width-' + postid);
-	const h = jQuery('#imgedit-scale-height-' + postid);
-	const warn = jQuery('#imgedit-scale-warn-' + postid);
 	let w1 = '';
 	let h1 = '';
 
@@ -277,6 +274,10 @@ imageEdit.scaleChanged = function (postid, x, el) {
 	if (this.validateNumeric(el) === false) {
 		return;
 	}
+
+	const w = jQuery('#imgedit-scale-width-' + postid);
+	const h = jQuery('#imgedit-scale-height-' + postid);
+	const warn = jQuery('#imgedit-scale-warn-' + postid);
 
 	if (x) {
 		h1 = w.val() !== '' ? Math.round(w.val() / ratio) : '';
