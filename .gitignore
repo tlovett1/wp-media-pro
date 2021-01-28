@@ -1,12 +1,12 @@
-node_modules
-bower_components
-release
-vendor
-.idea
-*.log
+# OS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Desktop.ini
 
-
-# Editors
+# IDE and local environment
 *.esproj
 *.tmproj
 *.tmproject
@@ -15,13 +15,14 @@ tmtags
 *.un~
 Session.vim
 *.swp
+/.idea/
 
-# Mac OSX
-.DS_Store
-._*
-.Spotlight-V100
-.Trashes
+# Packages
+/vendor/
+/node_modules/
+/bower_components/
+npm-debug.log
+yarn-error.log
 
-# Windows
-Thumbs.db
-Desktop.ini
+# Distribution
+/release/
